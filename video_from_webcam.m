@@ -1,31 +1,36 @@
 %% Collect image from webcam
 clear('usbcam'); % clears existing usbcam connections
-webcam_name = 'c922 Pro Stream Webcam' ; % or: 'USB2.0 Camera'
-usbcam = webcam(find(ismember(webcamlist,webcam_name))); % pick the USB camera
-if exist('usbcam') == 0
-    error('No USB camera is found') % throw error if camera is absent
-end
+usbcam = webcam(find(ismember(webcamlist, 'USB2.0 Camera'))); %'c922 Pro Stream Webcam'))); % pick the USB camera
 usbcam.AvailableResolutions % check possible resolutions
-usbcam.Resolution =  '1280x720'; %'800x600'; % % set highest res
+usbcam.Resolution =  '800x600'; %'1920x1080' ;% '1920x1080'; %'1280x720'; '1600x896' % set highest res
 usbcam.ExposureMode = 'manual'; % fix the exposure
-usbcam.Exposure  = -8 ; % Specify exposure, in log base 2 seconds (1/2^n seconds)
+usbcam.Exposure  = -9 ; % Specify exposure, in log base 2 seconds (1/2^n seconds)
                          % more negative values are shorter
 usbcam.Sharpness = 4  ;  % not sure what this does exactly
 usbcam.Contrast  = 63 ;
+% usbcam.framerate
+% preview(usbcam);
+%disp('Press any key to image') 
+%pause;
+% closePreview(usbcam);
 
-white_bg = ones(1080,1920);
 f = figure();
-movegui(f,[2500,0]); % push figure into the right display
+disp('Move figure window right to projector display')
+pause;
+% Take an average image
+white_bg = ones(1080,1920);
+
 fullscreen_fun(white_bg,f);
 pause(1);
 
 % average some images
-im_reps = 100;
+im_reps = 10;
 sumImage = double(snapshot(usbcam)); % Inialize to first image.
 for i=2:im_reps % Read in remaining images.
   rgbImage = snapshot(usbcam);
   sumImage = sumImage + double(rgbImage);
-  %pause(0.007); % pause to stop interference - doesn't seem to matter
+  %r = rand(10, 100,'double');
+  %pause(r/1000); % pause to stop interference - doesn't seem to matter
 end
 usb_img = uint8(sumImage / im_reps);
 
@@ -33,6 +38,9 @@ clear('usbcam');
 close(f);
 figure();
 imshowpair(rgbImage,usb_img,'montage')  %or image(img) % get image, which is already a structure
+
+%% crop
+usb_img = imcrop(usb_img);
 
 %% Extract color channels
 
@@ -51,6 +59,8 @@ histogram(redChannel  , 'FaceColor','r', 'EdgeAlpha',0, 'FaceAlpha',0.33);
 histogram(greenChannel, 'FaceColor','g', 'EdgeAlpha',0, 'FaceAlpha',0.33);
 histogram(meanChannel, 'FaceColor',[0.25,0.25,0.25], 'EdgeAlpha',0, 'FaceAlpha',0.33);
 hold off;
+
+
 
 %% Make thresholded matrix from one channel
 usedChannel = blueChannel; % which channel is used from here on in
@@ -95,6 +105,7 @@ stats = regionprops('table',inv_blob_2,'Area','Centroid',...
 %plot(p(:,1), p(:,2), '.-'), axis equal
 
 %% Reduce blob size
+
 % erode image until area reduced two thirds
 eroded_area = stats{1,1};
 valve_proportion = 0.7 ;
@@ -118,11 +129,14 @@ stats2 = regionprops('table',inv_valve_stimulus,'Area','Centroid',...
 
 diff_stats = stats{1,:} - stats2{1,:}; % see diffs
 disp(diff_stats(1)*100 / stats{1,1}) % percentage diff area between old and new blob
+
 valve_stimulus = ~ inv_valve_stimulus; % invert the new blob
 
 %% Cover the girdle
+
 % COULD MAKE A WHILE LOOP WHICH EXPANDS BW2 UNTIL IT DEFINITELY DOESN'T
 % OVERLAP THE VALVE BEFORE SUBTRACTING THAT AREA FROM THE GIRDLE STIMULUS
+
 inv_girdle_stimulus = inv_blob_2 - inv_valve_stimulus ; % take the silhouette of the animal and increase the values
 girdle_stimulus = ~ inv_girdle_stimulus; % the girdle covering stimulus
 

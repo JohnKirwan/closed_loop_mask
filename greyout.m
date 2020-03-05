@@ -1,6 +1,6 @@
-function [usb_img] = blackout(threshold,invtform,girdle_proportion,valve_proportion,usbcam,cam_crop,outputView,figure_h,im_reps,part)
+function [usb_img] = greyout(threshold,invtform,girdle_proportion,valve_proportion,usbcam,cam_crop,outputView,figure_h,im_reps,part)
 % Ablates the light over the chiton and not elsewhere
-fudge_factor = 1.31;
+fudge_factor = 1.32;
 if part == "girdle"
     valve_proportion = 1 - girdle_proportion*fudge_factor ; % within this script, the valve prop is 1 - girdle
 end
@@ -96,9 +96,9 @@ else
 end
 
 %%
-transformed_blob = imwarp(output_stimulus, invtform,'FillValues',90, 'OutputView',outputView);
-%new_blob = transformed_blob - 1555; % new line to remakes blob
-%newblob(new_blob < 0) = 0; % remove negative values
-fullscreen_fun(transformed_blob,figure_h);
+transformed_blob = imwarp(output_stimulus, invtform,'FillValues',255, 'OutputView',outputView);
+new_blob = transformed_blob + 0.0001 ; % new line to remakes blob
+new_blob(new_blob > 1) = 1; % remove negative values
+fullscreen_fun(new_blob,figure_h);
 
 end

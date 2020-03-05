@@ -10,8 +10,8 @@ pause(0.00001);
 fullscreen_fun(original,figure_handle);
 pause(1)
 
-usbcam.Exposure  = -8.5 ; % Specify exposure, in log base 2 seconds (1/2^n seconds) - more negative values are shorter
-im_reps = 100; % loads of images for this step
+usbcam.Exposure  = -10.5 ; % Specify exposure, in log base 2 seconds (1/2^n seconds) - more negative values are shorter
+im_reps = 200; % loads of images for this step
 sumImage = double(snapshot(usbcam)); % Inialize to first image.
 for i=2:im_reps % Read in remaining images.
   rgbImage = snapshot(usbcam);
