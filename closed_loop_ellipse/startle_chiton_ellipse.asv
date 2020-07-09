@@ -32,7 +32,7 @@ red_bg(:,:,1)=0.5;   %Red (dark red)
 f = figure();
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
-pause(3);
+pause(0.1);
 disp('Double click inside a box to crop')
 figure;
 [J,cam_crop] = imcrop(snapshot(usbcam));
@@ -90,33 +90,6 @@ close 33;
 figure;
 usb_img = uint8(sumImage / im_reps);
 imshowpair(imcrop(rgb2gray(usb_img),cam_crop), imcrop(rgb2gray(usb_img),cam_crop) > threshold,'montage');
-
-%% Test girdle Accuracy
-
-f = figure(69);
-movegui(f,[2500,0]); % push figure into the right display
-fullscreen_fun(white_bg,f);
-pause(3);
-girdle_proportion = 0.22;
-
-usb_img = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,...
-               usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
-        pause(10);
-        sumImage = double(snapshot(usbcam)); %inialise the first image
-        for j=2:im_reps %read in remaining images
-            rgbImage = snapshot(usbcam);
-            sumImage = sumImage + double(rgbImage);
-        end
-        cam_img = uint8(sumImage/im_reps);
-        filename = strcat('girdle_trial', strrep(datestr(datetime('now')),':',''), '.png') ;
-        imwrite(cam_img,filename);
-        pause(3);
-
-f = figure();
-movegui(f,[2500,0]); % push figure into the right display
-fullscreen_fun(white_bg,f);
-close 69;
-
 
 %% Display the various stimuli
 
