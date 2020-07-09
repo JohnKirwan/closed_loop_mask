@@ -9,7 +9,7 @@ regionprops_obj = regionprops(BWimage,'Area','Centroid',...
 %imshow(BWimage)
 % template_xy fits a symmetrical ellipse based on regionprops over the
 % blob, with the radii scaled. 
-[x, y] = template_xy(regionprops_obj,ScaleFactor,1); 
+[x, y] = template_xy_longer(regionprops_obj,ScaleFactor,1); % shortens the ellipse
 EllipseMask = poly2mask(x,y,size(BWimage,1),size(BWimage,2));
 
 end
