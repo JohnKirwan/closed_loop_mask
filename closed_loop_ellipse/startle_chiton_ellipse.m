@@ -97,7 +97,9 @@ f = figure(69);
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
 pause(3);
-girdle_proportion = 0.22;
+girdle_proportion = 0.35;
+elongate_ellipse = 1.15;
+dilation_perc = 1.30;
 
 usb_img = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,...
                usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT

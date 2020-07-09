@@ -37,7 +37,7 @@ if sum(part == ["whole","girdle"]) > 0  % if it is the girdle or valve   %"girdl
   stats = regionprops('table',inv_blob_2,'Area','Centroid',...
       'MajorAxisLength','MinorAxisLength','Orientation','Circularity');
   %% Increase blob size - dilate image until area increased 10%
-  inv_blob_2_larger = resizeEllipse(inv_blob_2,1.1);
+  inv_blob_2_larger = resizeEllipse(inv_blob_2,dilation_perc);
 
   % Now check the stats of the newly eroded version
   stats2 = regionprops('table',inv_blob_2_larger,'Area','Centroid',...
