@@ -92,6 +92,10 @@ figure;
 usb_img = uint8(sumImage / im_reps);
 imshowpair(imcrop(rgb2gray(usb_img),cam_crop), imcrop(rgb2gray(usb_img),cam_crop) > threshold,'montage');
 
+%% Parameters
+girdle_proportion = 0.35;
+elongate_ellipse = 1.15; %########################################
+dilation_perc = 1.20; %##################################
 
 %% Test girdle Accuracy
 
@@ -99,12 +103,10 @@ f = figure(69);
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
 pause(3);
-girdle_proportion = 0.35;
-elongate_ellipse = 1.15; %########################################
-dilation_perc = 1.20; %##################################
+
 
 usb_img = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,...
-               usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
+               usbcam,cam_crop,outputView,f,im_reps,dilation_perc,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(10);
         sumImage = double(snapshot(usbcam)); %inialise the first image
         for j=2:im_reps %read in remaining images

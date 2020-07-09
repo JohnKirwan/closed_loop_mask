@@ -1,4 +1,4 @@
-function [x_coords,y_coords] = template_xy_longer(regionprops_obj,ScaleFactor,nblob)
+function [x_coords,y_coords] = template_xy_longer(regionprops_obj,ScaleFactor,nblob,elongate_ellipse)
 %template_xy Gets xy coords for a symmetrical elliptical mask
 %   Detailed explanation goes here
 phi = linspace(0,2*pi,100); % a seq to calculate coords 

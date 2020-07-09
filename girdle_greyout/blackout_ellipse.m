@@ -1,6 +1,6 @@
-function [usb_img] = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,usbcam,cam_crop,outputView,figure_h,im_reps,part)
+function [usb_img] = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,usbcam,cam_crop,outputView,figure_h,im_reps,part,dilation_perc)
 % Ablates the light over the chiton and not elsewhere
-fudge_factor = 1;
+fudge_factor = 1.1;
 if part == "girdle"
     valve_proportion = 1 - girdle_proportion*fudge_factor ; % within this script, the valve prop is 1 - girdle
 end
