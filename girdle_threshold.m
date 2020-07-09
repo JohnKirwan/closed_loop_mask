@@ -70,20 +70,20 @@ recovered  = imwarp(recorded,invtform,'OutputView',outputView, 'FillValues',255)
 figure(105), imshowpair(original,recovered,'montage'); 
 
 %% Set the color value threshold and other parameters
-threshold = 180;
+threshold = 185; %2/3*255*graythresh(original);%  170;
 valve_proportion = 0.40;    % amount of animal area given by the valve
 girdle_proportion = 0.21; % amount of animal area given by the girdle
 im_reps = 20 ;             % number of images to average
-num_repeats = 3; % number of repeats for each condition
-randz = repmat(1:11,num_repeats); % random array of 20 numbers between 1 and 4
+num_repeats = 4; % number of repeats for each condition
+randz = repmat(1:7,num_repeats); % random array of 20 numbers between 1 and 4
 randz=randz(randperm(length(randz)));
-
+chiton_number = input('Enter chiton number: ','s');
 
 %% Have a look at the webcam
 f = figure(33);
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
-pause(6);
+pause(6); 
 
 sumImage = double(snapshot(usbcam)); % Inialize to first image.
 for i=2:im_reps % Read in remaining images.
@@ -94,7 +94,7 @@ close 33;
 figure;
 usb_img = uint8(sumImage / im_reps);
 imshowpair(imcrop(rgb2gray(usb_img),cam_crop), imcrop(rgb2gray(usb_img),cam_crop) > threshold,'montage');
-pause();
+
 
 %% Test girdle Accuracy
 
@@ -102,19 +102,20 @@ f = figure(69);
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
 pause(3);
-girdle_proportion = 0.23;
+girdle_proportion = 0.15;
 
 usb_img = blackout(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
-        pause(8);
+        pause(10);
         sumImage = double(snapshot(usbcam)); %inialise the first image
         for j=2:im_reps %read in remaining images
             rgbImage = snapshot(usbcam);
             sumImage = sumImage + double(rgbImage);
         end
         cam_img = uint8(sumImage/im_reps);
-        filename = strcat('girdle_trial', strrep(datestr(datetime('now')),':',''), '.png') ;
+        filename = strcat(chiton_number, 'girdle_trial', strrep(datestr(datetime('now')),':',''), '.png') ;
         imwrite(cam_img,filename);
+        pause(3);
 
 f = figure();
 movegui(f,[2500,0]); % push figure into the right display
@@ -134,27 +135,9 @@ info = strings(length(randz),3); % collect trial details
 i = 1; % initialize for while loop
 
 while i <= length(randz)
-  %for i = randz
-     if randz(i) == 1
-         disp('Girdle blacked out 0.0001');
-% %         %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-% %         %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
-         usb_img = greyout(threshold,invtform,girdle_proportion,valve_proportion,...
-                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE VALVE BLACKOUT SCRIPT
-         pause(3);
-         sumImage = double(snapshot(usbcam)); %inialise the first image
-         for j=2:im_reps %read in remaining images
-            rgbImage = snapshot(usbcam);
-            sumImage = sumImage + double(rgbImage);
-         end
-         cam_img = uint8(sumImage/im_reps);
-         filename = strcat('Girdle 0.0001', strrep(datestr(datetime('now')),':',''), '.png') ;
-         imwrite(cam_img,filename); 
-         info(i,3) = 'Girdle 0.0001';    
-      elseif randz(i) == 2
+    if randz(i) == 1
         disp('Girdle blacked out 0.1');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = greyout0_1(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(3);
@@ -164,12 +147,12 @@ while i <= length(randz)
             sumImage = sumImage + double(rgbImage);
          end
         cam_img = uint8(sumImage/im_reps);
-        filename = strcat('Girdle 0.1', strrep(datestr(datetime('now')),':',''), '.png') ;
-        info(i,3) = 'Girdle 0.1';
-     elseif randz(i) == 3
+        filename = strcat(chiton_number, 'Girdle 0.1', strrep(datestr(datetime('now')),':',''), '.png');
+        imwrite(cam_img,filename);
+        info(i,3) = '97%';
+    elseif randz(i) == 2
         disp('Girdle blacked out 0.3');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = greyout0_3(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(3);
@@ -179,13 +162,12 @@ while i <= length(randz)
             sumImage = sumImage + double(rgbImage);
          end
         cam_img = uint8(sumImage/im_reps);
-        filename = strcat('Girdle 0.3', strrep(datestr(datetime('now')),':',''), '.png') ;
+        filename = strcat(chiton_number, 'Girdle 0.3', strrep(datestr(datetime('now')),':',''), '.png');
         imwrite(cam_img,filename); 
-        info(i,3) = 'Girdle 0.3';
-     elseif randz(i) == 4
+        info(i,3) = '90%';
+    elseif randz(i) == 3
         disp('Girdle blacked out 0.5');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = greyout0_5(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(3);
@@ -195,12 +177,12 @@ while i <= length(randz)
             sumImage = sumImage + double(rgbImage);
          end
         cam_img = uint8(sumImage/im_reps);
-        filename = strcat('Girdle 0.5', strrep(datestr(datetime('now')),':',''), '.png') ;
-        info(i,3) = 'Girdle 0.5';
-        elseif randz(i) == 5
+        filename = strcat(chiton_number, 'Girdle 0.5', strrep(datestr(datetime('now')),':',''), '.png');
+        imwrite(cam_img,filename);
+        info(i,3) = '54%';
+    elseif randz(i) == 4
         disp('Girdle blacked out 0.6');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = greyout0_6(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(3);
@@ -210,53 +192,26 @@ while i <= length(randz)
             sumImage = sumImage + double(rgbImage);
          end
         cam_img = uint8(sumImage/im_reps);
-        filename = strcat('Girdle 0.0001', strrep(datestr(datetime('now')),':',''), '.png') ;
+        filename = strcat(chiton_number, 'Girdle 0.6', strrep(datestr(datetime('now')),':',''), '.png') ;
         imwrite(cam_img,filename);
-        info(i,3) = 'Girdle 0.6';
-    elseif randz(i) == 6
-        disp('Girdle blacked out 0.65');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
-        usb_img = greyout0_6(threshold,invtform,girdle_proportion,valve_proportion,...
-                usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
-        pause(3);
-        info(i,3) = 'Girdle 0.65';
-     elseif randz(i) == 7
+        info(i,3) = '27%';
+    elseif randz(i) == 5
         disp('Girdle blacked out 0.7');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = greyout0_7(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(3);
-        info(i,3) = 'Girdle 0.7';  
-     elseif randz(i) == 8
-        disp('Girdle blacked out 0.9');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
-        usb_img = greyout0_9(threshold,invtform,girdle_proportion,valve_proportion,...
-                usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
-        pause(3);
-        info(i,3) = 'Girdle 0.9';
-     elseif randz(i) == 9
-        disp('Girdle blacked out normal');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
-        usb_img = blackout(threshold,invtform,girdle_proportion,valve_proportion,...
-                usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
-        pause(3);
-        info(i,3) = 'Girdle 0';
-     elseif randz(i) == 10
+        info(i,3) = '7%';  
+    elseif randz(i) == 6
         disp('Girdle White');
-        %usb_img = valve_blackout(threshold,invtform,valve_proportion,...
-        %    usbcam,cam_crop,outputView,f,im_reps); % RUN THE VALVE BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = greyout_1(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
         pause(3);
-        info(i,3) = 'girdle 1';       
-     else
+        info(i,3) = 'Control';       
+    else
         disp('Whole chiton blacked out');
-        %usb_img = chiton_blackout(threshold,invtform,...
-        %        usbcam,cam_crop,outputView,f,im_reps); % RUN THE ANIMAL BLACKOUT SCRIPT
+        disp(datetime('now'));
         usb_img = blackout(threshold,invtform,girdle_proportion,valve_proportion,...
                 usbcam,cam_crop,outputView,f,im_reps,"whole"); 
         pause(3);
@@ -276,7 +231,6 @@ while i <= length(randz)
 end
 
 disp(strcat('End of_',num2str(length(randz)),' trials'));
-chiton_name = input('Enter chiton name: ','s');
-writematrix(info,strcat(chiton_name, strrep(datestr(datetime('now')),':','') ,'.xlsx'),...
+writematrix(info,strcat(chiton_number, strrep(datestr(datetime('now')),':','') ,'.xlsx'),...
     'FileType','spreadsheet');
 close all;
