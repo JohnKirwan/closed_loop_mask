@@ -68,7 +68,7 @@ recovered  = imwarp(recorded,invtform,'OutputView',outputView, 'FillValues',255)
 figure(105), imshowpair(original,recovered,'montage'); 
 
 %% Set the color value threshold and other parameters
-threshold = 185; %2/3*255*graythresh(original);%  170;
+threshold = 180; %2/3*255*graythresh(original);%  170;
 valve_proportion = 0.40;    % amount of animal area given by the valve
 girdle_proportion = 0.21; % amount of animal area given by the girdle
 im_reps = 20 ;             % number of images to average
@@ -81,6 +81,7 @@ chiton_number = input('Enter chiton number: ','s');
 f = figure(33);
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
+pause(3);
 
 sumImage = double(snapshot(usbcam)); % Inialize to first image.
 for i=2:im_reps % Read in remaining images.
@@ -93,9 +94,9 @@ usb_img = uint8(sumImage / im_reps);
 imshowpair(imcrop(rgb2gray(usb_img),cam_crop), imcrop(rgb2gray(usb_img),cam_crop) > threshold,'montage');
 
 %% Parameters
-girdle_proportion = 0.35;
-elongate_ellipse = 1.15; %########################################
-dilation_perc = 1.20; %##################################
+% girdle_proportion = 0.35;
+% elongate_ellipse = 1.15; %########################################
+% dilation_perc = 1.20; %##################################
 
 %% Test girdle Accuracy
 
@@ -103,11 +104,11 @@ f = figure(69);
 movegui(f,[2500,0]); % push figure into the right display
 fullscreen_fun(white_bg,f);
 pause(3);
-
+girdle_proportion = 0.30;
 
 usb_img = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,...
-               usbcam,cam_crop,outputView,f,im_reps,dilation_perc,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
-        pause(10);
+               usbcam,cam_crop,outputView,f,im_reps,"girdle"); % RUN THE GIRDLE BLACKOUT SCRIPT
+        pause(5);
         sumImage = double(snapshot(usbcam)); %inialise the first image
         for j=2:im_reps %read in remaining images
             rgbImage = snapshot(usbcam);

@@ -1,4 +1,4 @@
-function [usb_img] = blackout_ellipse(threshold,invtform,girdle_proportion,valve_proportion,usbcam,cam_crop,outputView,figure_h,im_reps,part)
+function [usb_img] = greyout_ellipse0_3(threshold,invtform,girdle_proportion,valve_proportion,usbcam,cam_crop,outputView,figure_h,im_reps,part)
 % Ablates the light over the chiton and not elsewhere
 fudge_factor = 1;
 if part == "girdle"
@@ -37,7 +37,7 @@ if sum(part == ["whole","girdle"]) > 0  % if it is the girdle or valve   %"girdl
   stats = regionprops('table',inv_blob_2,'Area','Centroid',...
       'MajorAxisLength','MinorAxisLength','Orientation','Circularity');
   %% Increase blob size - dilate image until area increased 10%
-  inv_blob_2_larger = resizeEllipse(inv_blob_2,1.20); %####################################################
+  inv_blob_2_larger = resizeEllipse(inv_blob_2,1.3);
 
   % Now check the stats of the newly eroded version
   stats2 = regionprops('table',inv_blob_2_larger,'Area','Centroid',...
@@ -80,9 +80,9 @@ else
 end
 
 %%
-transformed_blob = imwarp(output_stimulus, invtform,'FillValues',155, 'OutputView',outputView);
-%new_blob = transformed_blob - 1555; % new line to remakes blob
-%newblob(new_blob < 0) = 0; % remove negative values
+transformed_blob = imwarp(output_stimulus, invtform,'FillValues',90, 'OutputView',outputView);
+new_blob = transformed_blob + 0.3; % new line to remakes blob
+newblob(new_blob < 1) = 1; % remove negative values
 fullscreen_fun(transformed_blob,figure_h);
 
 end
